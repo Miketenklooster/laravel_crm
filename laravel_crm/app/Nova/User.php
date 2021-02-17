@@ -56,6 +56,21 @@ class User extends Resource
                 ->creationRules('unique:users,email')
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
+            Text::make('Phone number')
+                ->rules('required', 'max:20'),
+
+            Text::make('Place')
+                ->rules('required', 'max:255'),
+
+            Text::make('Street')
+                ->rules('required', 'max:255'),
+
+            Text::make('House number')
+                ->rules('required', 'max:10'),
+
+            Text::make('Postal code')
+                ->rules('required', 'max:35'),
+
             Password::make('Password')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
