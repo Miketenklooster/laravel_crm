@@ -46,6 +46,10 @@ class User extends Resource
 
             Gravatar::make()->maxWidth(50),
 
+            Text::make('Company name')
+                ->sortable()
+                ->rules('required', 'max:255'),
+
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
@@ -58,8 +62,8 @@ class User extends Resource
 
             Text::make('Phone number')
                 ->rules('required', 'max:20'),
-
-            Text::make('Place')
+          
+            Text::make('City')
                 ->rules('required', 'max:255'),
 
             Text::make('Street')
@@ -119,6 +123,8 @@ class User extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new Actions\AddAccountToWeFact
+        ];
     }
 }
