@@ -43,7 +43,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         Gate::define('viewNova', function ($user) {
             return in_array($user->email, [
-                //
+                //sets user who can access non-local environments
+                'tester@test.com'
             ]);
         });
     }

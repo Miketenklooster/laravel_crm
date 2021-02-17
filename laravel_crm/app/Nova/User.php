@@ -62,7 +62,7 @@ class User extends Resource
 
             Text::make('Phone number')
                 ->rules('required', 'max:20'),
-
+          
             Text::make('City')
                 ->rules('required', 'max:255'),
 
