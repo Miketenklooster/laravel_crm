@@ -3,19 +3,18 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Select;
 
-class User extends Resource
+class Customer extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\User::class;
+    public static $model = \App\Models\Customer::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -30,7 +29,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id', 'company_name', 'name', 'email',
     ];
 
     /**
@@ -44,8 +43,6 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Gravatar::make()->maxWidth(50),
-
             Text::make('Company name')
                 ->sortable()
                 ->rules('required', 'max:255'),
@@ -53,6 +50,12 @@ class User extends Resource
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
+
+            Select::make('Gender')->options([
+                    'm' => 'Male',
+                    'f' => 'Female',
+                    'd' => 'Transgender',
+            ])->displayUsingLabels(),
 
             Text::make('Email')
                 ->sortable()
@@ -74,11 +77,6 @@ class User extends Resource
 
             Text::make('Postal code')
                 ->rules('required', 'max:35'),
-
-            Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', 'string', 'min:8')
-                ->updateRules('nullable', 'string', 'min:8'),
         ];
     }
 
@@ -123,6 +121,8 @@ class User extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new Actions\AddAccountToWeFact
+        ];
     }
 }

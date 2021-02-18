@@ -3,19 +3,21 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Textarea;
+use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class Product extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\User::class;
+    public static $model = \App\Models\Product::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -30,7 +32,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id', 'name', 'status',
     ];
 
     /**
@@ -42,43 +44,38 @@ class User extends Resource
     public function fields(Request $request)
     {
         return [
-            ID::make()->sortable(),
-
-            Gravatar::make()->maxWidth(50),
-
-            Text::make('Company name')
-                ->sortable()
-                ->rules('required', 'max:255'),
+            ID::make(__('ID'), 'id')->sortable(),
 
             Text::make('Name')
                 ->sortable()
                 ->rules('required', 'max:255'),
 
-            Text::make('Email')
+            Textarea::make('Key phrase')
                 ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
+                ->rules('required', 'max:255')
+                ->displayUsing(function ($text) {
+                    if (strlen($text) > 30) {
+                        return substr($text, 0, 30) . '...';
+                    }
+                    return $text;
+                }),
 
-            Text::make('Phone number')
-                ->rules('required', 'max:20'),
-          
-            Text::make('City')
-                ->rules('required', 'max:255'),
+            Textarea::make('Description')
+                ->rules('required')
+                ->onlyOnForms(),
 
-            Text::make('Street')
-                ->rules('required', 'max:255'),
+            Currency::make('Budget')->rules('required')->currency('EUR')->displayUsing(function($amount){
+                return number_format((float) $amount, 2);
+            }),
 
-            Text::make('House number')
-                ->rules('required', 'max:10'),
-
-            Text::make('Postal code')
-                ->rules('required', 'max:35'),
-
-            Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', 'string', 'min:8')
-                ->updateRules('nullable', 'string', 'min:8'),
+            Select::make('Status')->rules('required')->options([
+                'new' => 'nieuw',
+                'send_offerte' => 'offerte sturen',
+                'in_process' => 'in onderhandeling',
+                'won' => 'gewonnen',
+                'lost' => 'verloren',
+                'archived' => 'gearchiveerd',
+                ])->displayUsingLabels(),
         ];
     }
 

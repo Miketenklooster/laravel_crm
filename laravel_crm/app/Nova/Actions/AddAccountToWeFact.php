@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
-use App\Nova\Actions\WeFactAPI;
+use App\Nova\WeFactAPI;
 use App\Models\User;
 // require_once("../wefact_api.php");
 
@@ -31,27 +31,29 @@ class AddAccountToWeFact extends Action
         // add user(s) to WeFact
         foreach ($models as $model) {
         // return dd($api);
-
-            // (new User($model))->send();
-            // return Action::message('It worked!');
+            $model->country = ($model->country) ? $model->country : "NL";
+            $model->gender = ($model->gender) ? $model->gender : "m";
             $fullname = $model->name;
             $fullname = trim($fullname); // remove double space
-            $firstname = substr($fullname, 0, strpos($fullname, ' '));
-            $lastname = substr($fullname, strpos($fullname, ' '), strlen($fullname));
+            $initials = substr($fullname, 0, strpos($fullname, ' '));
+            $surname = substr($fullname, strpos($fullname, ' '), strlen($fullname));
             $parameters = [
+                "DebtorCode" => $model->id,
                 "CompanyName" => $model->company_name,
-                "Initials" => $firstname,
-                "SurName" => $lastname,
+                "Initials" => $initials,
+                "SurName" => $surname,
+                "Sex" => $model->gender,
                 "Address" => $model->street . ' ' . $model->house_number,
                 "ZipCode" => $model->postal_code,
                 "City" => $model->city,
-                "Country" => "NL",
+                "Country" => $model->country,
                 "EmailAddress" => $model->email,
                 "PhoneNumber" => $model->phone_number
             ];
             
-            $response = $api->sendRequest('creditor', 'add', $parameters);
+            $response = $api->sendRequest('debtor', 'add', $parameters);
             return $response;
+            // return Action::message('It worked!');
         }
         
     }
