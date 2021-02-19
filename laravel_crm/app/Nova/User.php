@@ -2,11 +2,13 @@
 
 namespace App\Nova;
 
+use Laravel\Nova\Panel;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Password;
+use Laravel\Nova\Fields\Gravatar;
 
 class User extends Resource
 {
@@ -63,17 +65,19 @@ class User extends Resource
             Text::make('Phone number')
                 ->rules('required', 'max:20'),
           
-            Text::make('City')
-                ->rules('required', 'max:255'),
+            (new Panel('Address information', [
+                Text::make('City')
+                    ->rules('required', 'max:255'),
 
-            Text::make('Street')
-                ->rules('required', 'max:255'),
+                Text::make('Street')
+                    ->rules('required', 'max:255'),
 
-            Text::make('House number')
-                ->rules('required', 'max:10'),
+                Text::make('House number')
+                    ->rules('required', 'max:10'),
 
-            Text::make('Postal code')
-                ->rules('required', 'max:35'),
+                Text::make('Postal code')
+                    ->rules('required', 'max:35'),
+            ])),
 
             Password::make('Password')
                 ->onlyOnForms()

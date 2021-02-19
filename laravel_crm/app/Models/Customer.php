@@ -25,5 +25,11 @@ class Customer extends Model
         'street',
         'house_number',
         'postal_code',
+        'product_code',
     ];
+
+    public function product_relationship()
+    {
+        return $this->belongsTo(\App\Models\Product::class, 'product_code');
+    }
 }

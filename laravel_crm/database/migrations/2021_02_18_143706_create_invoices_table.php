@@ -24,7 +24,7 @@ class CreateInvoicesTable extends Migration
             $table->timestamp('pay_date');
             $table->text('description');
             $table->string('comment');
-            $table->string('status');
+            $table->integer('status');
             $table->timestamps();
         });
     }

@@ -26,4 +26,23 @@ class Invoice extends Model
         'comment',
         'status',
     ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'pay_date' => 'datetime',
+    ];
+
+    public function customer_relationship()
+    {
+        return $this->belongsTo(\App\Models\Customer::class, 'customer_id');
+    }
+
+    public function product_relationship()
+    {
+        return $this->belongsTo(\App\Models\Product::class, 'product_code');
+    }
 }

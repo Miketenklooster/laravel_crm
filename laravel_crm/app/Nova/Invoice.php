@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Currency;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class Invoice extends Resource
@@ -33,7 +34,7 @@ class Invoice extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'product_code',
+        'id', 'name', 'product_code',
     ];
 
     /**
@@ -47,17 +48,25 @@ class Invoice extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
 
-            Select::make('Customer id')
+            // Select::make('Customer', 'customer_id')
+            // ->rules('required')
+            // ->options(\App\Models\Customer::pluck('name', 'id'))
+            // ->searchable(),
+
+            // Select::make('')
+            // ->rules('required')
+            // ->options(\App\Models\Product::pluck('name', 'id'))
+            // ->searchable(),
+
+            BelongsTo::make('Customer', 'customer_relationship', 'App\Nova\Customer')
             ->rules('required')
-            ->options(\App\Models\Customer::pluck('name', 'id'))
             ->searchable(),
 
             Text::make('Term')
             ->rules('required', 'max:255'),
 
-            Select::make('Product code')
+            BelongsTo::make('Product code', 'product_relationship', 'App\Nova\Product')
             ->rules('required')
-            ->options(\App\Models\Product::pluck('name', 'id'))
             ->searchable(),
 
             Textarea::make('Key phrase')
@@ -158,6 +167,9 @@ class Invoice extends Resource
      */
     public function actions(Request $request)
     {
-        return [];
+        return [
+            new Actions\AddInvoiceToWeFact,
+            (new Actions\DownloadInvoiceFromWeFact)->onlyOnTableRow()
+        ];
     }
 }
